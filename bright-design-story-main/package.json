@@ -13,7 +13,9 @@
     "test:watch": "vitest",
     "server": "tsx server.ts",
     "server:dev": "tsx watch server.ts",
-    "start": "concurrently \"npm run server\" \"npm run dev\""
+    "start": "concurrently \"npm run server\" \"npm run dev\"",
+"migrate": "tsx scripts/migratePosts.ts",
+    "db:init": "tsx -e \"import('./database').then(m => m.initializeDatabase())\""
   },
   "dependencies": {
     "@google/genai": "^1.39.0",
@@ -50,6 +52,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/sqlite3": "^5.1.0",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -73,6 +76,7 @@
     "react-router-dom": "^6.30.1",
     "recharts": "^2.15.4",
     "sonner": "^1.7.4",
+    "sqlite3": "^5.1.7",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",

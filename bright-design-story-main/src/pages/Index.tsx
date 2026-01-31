@@ -9,142 +9,16 @@ import { PostCard } from "@/components/feed/PostCard";
 import { EventsSection } from "@/components/feed/EventsSection";
 import { useState, useEffect } from "react";
 import { FeedFilter, Post } from "@/types/feed";
+import { usePosts } from "@/hooks/usePosts";
 
-// Enhanced posts with more metadata for filtering
-const posts: Post[] = [
-  {
-    id: 1,
-    type: "photo",
-    author: {
-      name: "Alex Johnson",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
-      verified: true,
-    },
-    image: "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=600&h=600&fit=crop",
-    caption: "Exploring new horizons 🌅 The journey never stops. #adventure #travel",
-    likes: 2847,
-    comments: 156,
-    timeAgo: "2h ago",
-    tags: ["adventure", "travel", "nature", "hiking"],
-    location: "Swiss Alps"
-  },
-  {
-    id: 2,
-    type: "photo",
-    author: {
-      name: "Maya Chen",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop",
-      verified: false,
-    },
-    image: "https://images.unsplash.com/photo-1682686581854-5e71f58e7e3f?w=600&h=600&fit=crop",
-    caption: "Coffee and creativity ☕ Best combo for a productive morning #coding #webdev",
-    likes: 1523,
-    comments: 89,
-    timeAgo: "4h ago",
-    tags: ["coding", "webdev", "productivity", "coffee"],
-    location: "San Francisco"
-  },
-  {
-    id: 3,
-    type: "photo",
-    author: {
-      name: "James Wilson",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop",
-      verified: true,
-    },
-    image: "https://images.unsplash.com/photo-1682687982501-1e58ab814714?w=600&h=600&fit=crop",
-    caption: "City lights and late nights 🌃 #cityscape #nightphotography #urban",
-    likes: 4201,
-    comments: 234,
-    timeAgo: "6h ago",
-    tags: ["cityscape", "nightphotography", "urban", "architecture"],
-    location: "New York"
-  },
-  {
-    id: 4,
-    type: "video",
-    author: {
-      name: "Sarah Miller",
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop",
-      verified: true,
-    },
-    videoUrl: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-    caption: "My new vlog is live! Check out my travel adventures 📹 #travelvlog #adventure #tech",
-    likes: 3200,
-    comments: 210,
-    timeAgo: "1d ago",
-    tags: ["travelvlog", "adventure", "tech", "vlogging"],
-    location: "Tokyo"
-  },
-  {
-    id: 5,
-    type: "text",
-    author: {
-      name: "David Park",
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop",
-      verified: false,
-    },
-    caption: "Just finished reading an amazing book about productivity. Here are my key takeaways:\n\n1. Focus on deep work\n2. Eliminate distractions\n3. Prioritize effectively\n\nWhat's the best book you've read recently? #productivity #books #learning",
-    likes: 890,
-    comments: 145,
-    timeAgo: "1d ago",
-    tags: ["productivity", "books", "learning", "business"],
-    location: "Remote"
-  },
-  {
-    id: 6,
-    type: "photo",
-    author: {
-      name: "Lisa Wong",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop",
-      verified: true,
-    },
-    image: "https://images.unsplash.com/photo-1551632811-561732d1e306?w=200&h=200&fit=crop",
-    caption: "Morning hike views 🏔️ Nothing beats nature's beauty #hiking #nature #wellness",
-    likes: 1850,
-    comments: 98,
-    timeAgo: "2d ago",
-    tags: ["hiking", "nature", "wellness", "outdoors"],
-    location: "Colorado"
-  },
-  {
-    id: 7,
-    type: "video",
-    author: {
-      name: "Tech Guru",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
-      verified: true,
-    },
-    videoUrl: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-    caption: "New AI tools that will change how you work forever! #ai #technology #innovation #future",
-    likes: 5200,
-    comments: 380,
-    timeAgo: "3h ago",
-    tags: ["ai", "technology", "innovation", "future"],
-    location: "Silicon Valley"
-  },
-  {
-    id: 8,
-    type: "text",
-    author: {
-      name: "Finance Expert",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop",
-      verified: true,
-    },
-    caption: "Market insights: Why I'm bullish on tech stocks this quarter. Full analysis in comments. #finance #stocks #investing #business",
-    likes: 3100,
-    comments: 420,
-    timeAgo: "5h ago",
-    tags: ["finance", "stocks", "investing", "business"],
-    location: "Wall Street"
-  }
-];
+// Posts are now fetched from the database using usePosts hook
 
 const Index = () => {
+  const { posts, loading, error, refetch } = usePosts();
   const [activeTab, setActiveTab] = useState("all");
   const [activeFilter, setActiveFilter] = useState<FeedFilter | null>(null);
   const [showFilterCreator, setShowFilterCreator] = useState(false);
-  const [filteredPosts, setFilteredPosts] = useState<Post[]>(posts);
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
   const [userFilters, setUserFilters] = useState<FeedFilter[]>([]);
 
   // Load last used filter and user filters from localStorage
@@ -170,7 +44,7 @@ const Index = () => {
     }
   }, []);
 
-  // Apply filters whenever activeTab or activeFilter changes
+// Apply filters whenever activeTab, activeFilter, or posts change
   useEffect(() => {
     let result = [...posts];
 
@@ -347,9 +221,32 @@ const Index = () => {
           </div>
         )}
         
-        <div className="divide-y divide-border">
+<div className="divide-y divide-border">
+          {/* Loading state */}
+          {loading && (
+            <div className="p-8 text-center">
+              <div className="text-2xl mb-2">⏳</div>
+              <h3 className="font-medium mb-1">Loading posts...</h3>
+            </div>
+          )}
+          
+          {/* Error state */}
+          {error && (
+            <div className="p-8 text-center">
+              <div className="text-2xl mb-2">❌</div>
+              <h3 className="font-medium mb-1">Error loading posts</h3>
+              <p className="text-sm text-muted-foreground mb-4">{error}</p>
+              <button
+                onClick={refetch}
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium"
+              >
+                Try Again
+              </button>
+            </div>
+          )}
+          
           {/* No posts message */}
-          {filteredPosts.length === 0 ? (
+          {!loading && !error && filteredPosts.length === 0 ? (
             <div className="p-8 text-center">
               <div className="text-2xl mb-2">📭</div>
               <h3 className="font-medium mb-1">No posts found</h3>
@@ -367,7 +264,7 @@ const Index = () => {
             </div>
           ) : (
             // Render filtered posts
-            filteredPosts.map((post, index) => {
+            !loading && !error && filteredPosts.map((post, index) => {
               // Check if we need to insert EventsSection
               const shouldShowEvents = !activeFilter && activeTab === "all" && index === 1;
               

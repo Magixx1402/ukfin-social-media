@@ -76,10 +76,65 @@ class ApiClient {
     return this.request('/health');
   }
 
-  async post<T>(endpoint: string, data: any): Promise<T> {
+async post<T>(endpoint: string, data: any): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: JSON.stringify(data),
+    });
+  }
+
+  // Posts API methods
+  async getPosts(limit?: number): Promise<{ posts: any[] }> {
+    const query = limit ? `?limit=${limit}` : '';
+    return this.request(`/posts${query}`);
+  }
+
+  async getPost(id: number): Promise<{ post: any }> {
+    return this.request(`/posts/${id}`);
+  }
+
+  async getUserPosts(userId: number, limit?: number): Promise<{ posts: any[] }> {
+    const query = limit ? `?limit=${limit}` : '';
+    return this.request(`/posts/user/${userId}${query}`);
+  }
+
+  async createPost(postData: {
+    content_type: 'photo' | 'video' | 'text';
+    content: string;
+    caption: string;
+    filter_tags?: string;
+    location?: string;
+  }): Promise<{ post: any }> {
+    return this.request('/posts', {
+      method: 'POST',
+      body: JSON.stringify(postData),
+    });
+  }
+
+  async updatePost(id: number, updates: {
+    caption?: string;
+    likes?: number;
+    comments?: number;
+    reposts?: number;
+    filter_tags?: string;
+    location?: string;
+  }): Promise<{ post: any }> {
+    return this.request(`/posts/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updates),
+    });
+  }
+
+  async deletePost(id: number): Promise<{ message: string }> {
+    return this.request(`/posts/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async toggleLike(id: number, increment: boolean = true): Promise<{ post: any }> {
+    return this.request(`/posts/${id}/like`, {
+      method: 'POST',
+      body: JSON.stringify({ increment }),
     });
   }
 }

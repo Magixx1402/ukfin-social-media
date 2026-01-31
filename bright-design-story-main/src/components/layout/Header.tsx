@@ -1,4 +1,4 @@
-import { Bell, MessageSquare, User } from "lucide-react";
+import { Bell, MessageSquare, User, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -18,6 +18,9 @@ export const Header = () => {
         </div>
         
         <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/mentor')}>
+            <Bot className="w-5 h-5" />
+          </Button>
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="w-5 h-5" />
             <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full" />

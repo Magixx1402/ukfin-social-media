@@ -75,6 +75,14 @@ class ApiClient {
   async healthCheck(): Promise<any> {
     return this.request('/health');
   }
+
+  async post<T>(endpoint: string, data: any): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
 }
 
+export { ApiClient };
 export const apiClient = new ApiClient();

@@ -3,7 +3,15 @@ import { GoogleGenAI } from "@google/genai";
 
 const router = express.Router();
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+// Initialize AI only when needed to avoid startup errors
+let ai: GoogleGenAI | null = null;
+
+const initializeAI = () => {
+  if (!ai && process.env.GEMINI_API_KEY) {
+    ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
+  }
+  return ai;
+};
 
 const mentorPrompt = `
 You are a friendly and knowledgeable university student mentor on a social media platform. Your goal is to support, guide, and encourage students in their academic and personal life. 
@@ -28,14 +36,19 @@ router.post('/chat', async (req, res) => {
     
     const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
 
-    // Try the AI response, fallback to simple response if it fails
+// Try the AI response, fallback to simple response if it fails
     try {
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: mentorPrompt + "\n\n" + message
-      });
+      const genAI = initializeAI();
+      if (genAI) {
+        const response = await genAI.models.generateContent({
+          model: "gemini-3-flash-preview",
+          contents: mentorPrompt + "\n\n" + message
+        });
 
-      res.json({ response: response.text });
+        res.json({ response: response.text });
+      } else {
+        throw new Error('AI not initialized');
+      }
     } catch (aiError) {
       console.log('AI failed, using fallback response:', aiError.message);
       res.json({ response: randomResponse });

@@ -14,8 +14,7 @@
     "server": "tsx server.ts",
     "server:dev": "tsx watch server.ts",
     "start": "concurrently \"npm run server\" \"npm run dev\"",
-"migrate": "tsx scripts/migratePosts.ts",
-    "db:init": "tsx -e \"import('./database').then(m => m.initializeDatabase())\""
+"seed": "tsx scripts/createSampleData.ts"
   },
   "dependencies": {
     "@google/genai": "^1.39.0",

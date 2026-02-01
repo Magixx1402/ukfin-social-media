@@ -324,7 +324,20 @@ const createSampleData = async () => {
     let createdCount = 0;
     for (const postData of posts) {
       try {
-        const newPost = await postOperations.create(postData);
+        const newPost = await postOperations.create({
+          user_id: postData.user_id,
+          username: postData.username,
+          display_name: postData.display_name,
+          avatar_url: postData.avatar_url,
+          content_type: postData.content_type,
+          content: postData.content,
+          caption: postData.caption,
+          likes: postData.likes,
+          comments: postData.comments,
+          reposts: postData.reposts,
+          filter_tags: postData.filter_tags,
+          location: postData.location
+        });
         console.log(`Created post ${newPost.id} (${postData.content_type}): ${postData.caption.substring(0, 50)}...`);
         createdCount++;
       } catch (error) {
